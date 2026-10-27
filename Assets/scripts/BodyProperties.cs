@@ -8,4 +8,10 @@ public class BodyProperties : MonoBehaviour
     {
         this.mass = mass;
     }
+
+    void OnDestroy()
+    {
+        if (ownedMaterial != null)
+            Destroy(ownedMaterial);
+    }
 }

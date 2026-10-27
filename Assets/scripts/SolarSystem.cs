@@ -19,7 +19,7 @@ public class solar_system_script : MonoBehaviour
 
     void AddBody(string name, float mass)
     {
-        GameObject obj = Instantiate(celestial_body_prefab);
+        GameObject obj = Instantiate(celestial_body_prefab, transform);
         obj.name = name;
         obj.GetComponent<BodyProperties>().Init(mass: mass);
         celestial_bodies.Add(obj);
