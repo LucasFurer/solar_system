@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class solar_system_script : MonoBehaviour
+public class solarSystem : MonoBehaviour
 {
     [SerializeField]
     private GameObject celestial_body_prefab;
