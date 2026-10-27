@@ -1,25 +1,27 @@
 using System.Collections.Generic;
-using Solar;
 using UnityEngine;
 
 public class solar_system_script : MonoBehaviour
 {
-    List<CelestialBody> celestial_bodies = new List<CelestialBody> { };
+    [SerializeField]
+    private GameObject celestial_body_prefab;
+
+    private List<GameObject> celestial_bodies = new List<GameObject>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GameObject obj = new GameObject("sun");
-        MeshFilter mesh_filter = obj.AddComponent<MeshFilter>();
-        mesh_filter.sharedMesh = Resources.GetBuiltinResource<Mesh>("Sphere.fbx");
-        MeshRenderer mesh_renderer = obj.AddComponent<MeshRenderer>();
-        Shader litShader = Shader.Find("Universal Render Pipeline/Lit");
-        mesh_renderer.sharedMaterial = new Material(litShader);
-
-        CelestialBody sun = new CelestialBody(10, obj);
-        celestial_bodies.Add(sun);
+        AddBody("sun", mass: 20);
     }
 
     // Update is called once per frame
     void Update() { }
+
+    void AddBody(string name, float mass)
+    {
+        GameObject obj = Instantiate(celestial_body_prefab);
+        obj.name = name;
+        obj.GetComponent<BodyProperties>().Init(mass: mass);
+        celestial_bodies.Add(obj);
+    }
 }

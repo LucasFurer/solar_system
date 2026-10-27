@@ -2,15 +2,10 @@ using UnityEngine;
 
 public class BodyProperties : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public float mass;
 
-    // Update is called once per frame
-    void Update()
+    public void Init(float mass)
     {
-        
+        this.mass = mass;
     }
 }
