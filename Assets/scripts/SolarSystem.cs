@@ -5,70 +5,49 @@ public class SolarSystem : MonoBehaviour
 {
     public GameObject celestial_body_prefab;
 
-    public float step_size = 0.1F;
+    public float step_size = 0.1f;
+    public float sim_delay = 1.0f / 60.0f;
+    private float time_since_last_step = 0.0f;
     public float G = 1f;
 
-    private List<GameObject> celestial_bodies = new List<GameObject>();
+    CelestialBody[] celestial_bodies;
+
+    void Awake()
+    {
+        celestial_bodies = FindObjectsByType<CelestialBody>();
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        AddBody(
-            name: "sun",
-            position: new Vector3(0, 0, 0),
-            mass: 20,
-            vel: new Vector3(0, 0, 0),
-            acc: Vector3.zero
-        );
-        AddBody(
-            name: "earth",
-            position: new Vector3(10, 0, 10),
-            mass: 10,
-            vel: new Vector3(-1, 0, 0),
-            acc: Vector3.zero
-        );
-        AddBody(
-            name: "mars",
-            position: new Vector3(-20, 0, -20),
-            mass: 3,
-            vel: new Vector3(0, 0, 1),
-            acc: Vector3.zero
-        );
-    }
+    void Start() { }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        ComputeGravity();
-        TimeStep();
-    }
+        time_since_last_step += Time.deltaTime;
 
-    void AddBody(string name, Vector3 position, float mass, Vector3 vel, Vector3 acc)
-    {
-        GameObject obj = Instantiate(celestial_body_prefab, transform);
-        BodyProperties prop = obj.GetComponent<BodyProperties>();
-        if (prop == null)
-            Debug.Log("prefab doesnt have BodyProperties");
-        obj.name = name;
-        obj.transform.position = position;
-        prop.Init(mass: mass, vel: vel, acc: acc);
-        celestial_bodies.Add(obj);
+        if (time_since_last_step > sim_delay)
+        {
+            time_since_last_step -= sim_delay;
+
+            ComputeGravity();
+            TimeStep();
+        }
     }
 
     void ComputeGravity()
     {
-        for (int i = 0; i < celestial_bodies.Count; ++i)
+        for (int i = 0; i < celestial_bodies.Length; ++i)
         {
-            BodyProperties A_prop = celestial_bodies[i].GetComponent<BodyProperties>();
-            Vector3 A_pos = celestial_bodies[i].transform.position;
+            CelestialBody A_prop = celestial_bodies[i];
+            Vector3 A_pos = celestial_bodies[i].gameObject.transform.position;
             A_prop.acc = Vector3.zero;
 
-            for (int j = 0; j < celestial_bodies.Count; ++j)
+            for (int j = 0; j < celestial_bodies.Length; ++j)
             {
                 if (i != j)
                 {
-                    BodyProperties B_prop = celestial_bodies[j].GetComponent<BodyProperties>();
-                    Vector3 B_pos = celestial_bodies[j].transform.position;
+                    CelestialBody B_prop = celestial_bodies[j];
+                    Vector3 B_pos = celestial_bodies[j].gameObject.transform.position;
 
                     Vector3 R = B_pos - A_pos;
                     float r = Mathf.Max(R.magnitude, 0.1f);
@@ -82,9 +61,9 @@ public class SolarSystem : MonoBehaviour
 
     void TimeStep()
     {
-        for (int i = 0; i < celestial_bodies.Count; ++i)
+        for (int i = 0; i < celestial_bodies.Length; ++i)
         {
-            BodyProperties prop = celestial_bodies[i].GetComponent<BodyProperties>();
+            CelestialBody prop = celestial_bodies[i];
             prop.vel += step_size * prop.acc;
             celestial_bodies[i].transform.position += step_size * prop.vel;
         }
